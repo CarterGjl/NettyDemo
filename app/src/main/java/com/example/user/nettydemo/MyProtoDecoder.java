@@ -11,7 +11,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 
 /**
- * Created by user on 2016/10/26.
+ * Created by carter on 2018.
  */
 
 public class MyProtoDecoder extends ProtobufDecoder {

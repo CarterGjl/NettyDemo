@@ -9,11 +9,15 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 /**
- * Created by user on 2016/10/27.
+ * Created by carter on 2018
  */
 
 public class NettyServer {
@@ -54,6 +58,8 @@ public class NettyServer {
                     @Override
                     protected void initChannel(NioServerSocketChannel nioServerSocketChannel) throws Exception {
                         ChannelPipeline pipeline = nioServerSocketChannel.pipeline();
+                        pipeline.addLast("decoder", new ByteArrayDecoder());
+                        pipeline.addLast("encoder", new ByteArrayEncoder());
                         pipeline.addLast("ServerSocketChannel out", new OutBoundHandler());
                         pipeline.addLast("ServerSocketChannel in", new InBoundHandler());
                     }
@@ -63,8 +69,8 @@ public class NettyServer {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         //为连接上来的客户端设置pipeline
                         ChannelPipeline pipeline = socketChannel.pipeline();
-                        pipeline.addLast("decoder", new ProtobufDecoder(Test.ProtoTest.getDefaultInstance()));
-                        pipeline.addLast("encoder", new ProtobufEncoder());
+                        pipeline.addLast("decoder", new ByteArrayDecoder());
+                        pipeline.addLast("encoder", new ByteArrayEncoder());
                         pipeline.addLast("out1", new OutBoundHandler());
                         pipeline.addLast("out2", new OutBoundHandler());
                         pipeline.addLast("in1", new InBoundHandler());
