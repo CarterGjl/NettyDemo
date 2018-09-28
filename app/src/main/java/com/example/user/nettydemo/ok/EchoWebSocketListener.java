@@ -11,8 +11,6 @@ public class EchoWebSocketListener extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
-
-
     }
 
     @Override

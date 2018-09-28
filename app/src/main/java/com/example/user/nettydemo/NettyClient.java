@@ -1,5 +1,7 @@
 package com.example.user.nettydemo;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.user.nettydemo.business.OnReceiveListener;
@@ -34,7 +36,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 public class NettyClient {
 
-    private static final String TAG = "NettyClient";
 
     private InetSocketAddress mServerAddress;
     private Bootstrap mBootstrap;
@@ -60,7 +61,8 @@ public class NettyClient {
         return INSTANCE;
     }
 
-    public void connect(final InetSocketAddress socketAddress, OnServerConnectListener onServerConnectListener) {
+    public void connect(@NonNull final InetSocketAddress socketAddress, @Nullable OnServerConnectListener
+            onServerConnectListener) {
         if (mChannel != null && mChannel.isActive()) {
             return;
         }
@@ -127,7 +129,8 @@ public class NettyClient {
         }
         mDispatcher.holdListener(msg.getBytes(), listener);
         if (mChannel != null) {
-            mChannel.writeAndFlush(msg.getBytes()).addListener((ChannelFutureListener) channelFuture -> {
+            byte[] bytes = msg.getBytes();
+            mChannel.writeAndFlush(bytes).addListener((ChannelFutureListener) channelFuture -> {
                 if (channelFuture.isSuccess()) {
 
 
@@ -139,5 +142,21 @@ public class NettyClient {
             });
         }
 
+    }
+
+    public void disConnect() {
+
+        if (mChannel != null) {
+            mChannel.closeFuture();
+            mChannel.close();
+            mChannel = null;
+
+        }
+        if (mWorkerGroup != null) {
+
+            mWorkerGroup.shutdownGracefully();
+            mWorkerGroup = null;
+
+        }
     }
 }

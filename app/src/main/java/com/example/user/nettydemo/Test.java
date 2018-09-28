@@ -832,6 +832,5 @@ public final class Test {
                         new com.google.protobuf.Descriptors.FileDescriptor[]{
                         }, assigner);
     }
-
     // @@protoc_insertion_point(outer_class_scope)
 }

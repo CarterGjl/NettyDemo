@@ -2,6 +2,7 @@ package com.example.user.nettydemo;
 
 import com.orhanobut.logger.Logger;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -26,6 +27,19 @@ public class HeartBeatHandler extends SimpleChannelInboundHandler {
         }
     }
 
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+
+        // TODO: 2018/9/7  注册业务通道
+        //通道建立发送identity
+        ctx.writeAndFlush("通道建立".getBytes())
+                .addListener((ChannelFutureListener) channelFuture -> {
+
+                    Logger.d("====通道建立成功===="+channelFuture.isSuccess());
+                });
+    }
+
     private void handleIdleEvent(ChannelHandlerContext ctx, IdleStateEvent event) {
 
         IdleState state = event.state();
@@ -35,14 +49,14 @@ public class HeartBeatHandler extends SimpleChannelInboundHandler {
             case READER_IDLE:
                 break;
             case WRITER_IDLE:
-                ctx.writeAndFlush("ping".getBytes()).addListener((ChannelFutureListener) channelFuture -> {
+                /*ctx.writeAndFlush("ping".getBytes()).addListener((ChannelFutureListener) channelFuture -> {
 
                     if (channelFuture.isSuccess()) {
                         Logger.i("============sending ping to server===========");
                     }else {
                         Logger.i("============sending ping to server failed===========");
                     }
-                });
+                });*/
 
                 break;
         }

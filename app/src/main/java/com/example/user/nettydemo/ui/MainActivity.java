@@ -1,6 +1,5 @@
 package com.example.user.nettydemo.ui;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,28 +8,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.nettydemo.NettyClient;
 import com.example.user.nettydemo.R;
 import com.example.user.nettydemo.Test;
-import com.example.user.nettydemo.business.OnReceiveListener;
 import com.example.user.nettydemo.business.OnServerConnectListener;
 import com.example.user.nettydemo.service.ServerService;
 import com.example.user.nettydemo.test.TestConfig;
+import com.orhanobut.logger.Logger;
 
-import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_6455;
-import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import static com.example.user.nettydemo.NettyServer.PORT_NUMBER;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -100,9 +91,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+                /*new InetSocketAddress("127.0.0.1", PORT_NUMBER)*/
+
 
                 NettyClient.getInstance()
-                        .connect(new InetSocketAddress("127.0.0.1", PORT_NUMBER), new OnServerConnectListener() {
+                        .connect(new InetSocketAddress(TestConfig.sData.getHost(), TestConfig
+                                .sData.getWsport()), new
+                                OnServerConnectListener() {
                             @Override
                             public void onConnectSuccess() {
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -116,19 +111,12 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void onConnectFailed() {
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(MainActivity.this, "connect failed!", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(MainActivity.this, "connect failed!", Toast.LENGTH_SHORT).show());
 
                             }
                         });
                 }
-            }).
-
-            start();
+            }).start();
 
         }
 
@@ -142,15 +130,15 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(etTitle.getText().toString())
                 .setContent(etContent.getText().toString())
                 .build();
-        NettyClient.getInstance().send(etTitle.getText().toString(), (Object msg) -> {
+            byte[] bytes = etTitle.getText().toString().getBytes();
+            Logger.d(bytes);
+            NettyClient.getInstance().send(etTitle.getText().toString(), (Object msg) -> {
             if (msg instanceof Test.ProtoTest) {
                 Log.d(TAG, "handleReceive: " + ((Test.ProtoTest) msg).getContent());
                 new Handler(Looper.getMainLooper()).post(() -> {
                     tvRes.setText("");
                     Test.ProtoTest test = (Test.ProtoTest) msg;
-                    tvRes.setText(test.getId() + "\n" +
-                            test.getTitle() + "\n" +
-                            test.getContent());
+                    tvRes.setText(String.format("%d\n%s\n%s", test.getId(), test.getTitle(), test.getContent()));
                 });
 
             }

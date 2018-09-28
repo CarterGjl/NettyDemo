@@ -1,7 +1,5 @@
 package com.example.user.nettydemo;
 
-import com.orhanobut.logger.Logger;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -14,7 +12,6 @@ public class InBoundHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Logger.d( "channelRead: " + ctx.name() + msg);
 
         super.channelRead(ctx, msg);
     }

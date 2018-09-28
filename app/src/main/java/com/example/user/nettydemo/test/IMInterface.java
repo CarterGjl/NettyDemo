@@ -23,9 +23,7 @@ public interface IMInterface {
      * @param loginMessage 登录信息
      * @return s
      */
-    @Headers({"Referer: http://dev.9spirit.cn:9099/websocket/network/index" +
-            ".html?account=5b619411f8d70463e79012cb&service=gwtuitionroom&terminal=1&imapitoken" +
-            "=5b8f8e0cf8d7040b39827b34", "imapitoken:5b90d62cf8d7040b39827b5c"})
+    @Headers({"imapitoken:5b963fb8cf93bb09e6f232a7"})
     @POST("rest/acuim/login")
     Observable<Result<Data>> login(@Body LoginMessage loginMessage);
 
